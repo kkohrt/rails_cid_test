@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Identifier:</strong>
+  <%= @body_site.identifier %>
+</p>
+
+<p>
+  <strong>Name:</strong>
+  <%= @body_site.name %>
+</p>
+
+<p>
+  <strong>Region:</strong>
+  <%= @body_site.region %>
+</p>
+
+<%= link_to 'Edit', edit_body_site_path(@body_site) %> |
+<%= link_to 'Back', body_sites_path %>

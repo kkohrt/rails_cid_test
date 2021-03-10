@@ -1,0 +1,32 @@
+<%= form_with(model: body_site, local: true) do |form| %>
+  <% if body_site.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(body_site.errors.count, "error") %> prohibited this body_site from being saved:</h2>
+
+      <ul>
+        <% body_site.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= form.label :identifier %>
+    <%= form.text_field :identifier %>
+  </div>
+
+  <div class="field">
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+
+  <div class="field">
+    <%= form.label :region %>
+    <%= form.text_field :region %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit %>
+  </div>
+<% end %>
