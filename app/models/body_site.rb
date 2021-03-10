@@ -16,4 +16,9 @@
 #
 class BodySite < ApplicationRecord
   validates :identifier, :name, presence: true, uniqueness: true
+
+  def to_s
+    "#{identifier}\t#{name}"
+
+  end
 end
