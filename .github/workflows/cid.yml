@@ -16,7 +16,8 @@ jobs:
       image: ruby:2.7.2
 
     services:
-      postgres:
+      # Note: this name/label has to be passed to the rails app as the db host
+      postgres_service:
         image: postgres:13.2
         env:
           POSTGRES_USER: postgres
@@ -30,6 +31,7 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     steps:
       - name: install PostgreSQL client
         run: apt-get update -qq && apt-get install libpq-dev
@@ -44,12 +46,14 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: cid_test
-          DATABASE_HOST: localhost
+          DATABASE_HOST: postgres_service
           RAILS_ENV: test
         run: |
           gem install bundler
           bundle config path vendor/bundle
+          bundle config --delete bin
           bundle install --jobs 4 --retry 3
+          rails app:update:bin
           bundle exec rails db:create
           bundle exec rails db:migrate
           bundle exec rspec spec
