@@ -37,7 +37,9 @@ jobs:
 
     steps:
       - name: install PostgreSQL client
-        run: apt-get update -qq && apt-get install libpq-dev
+        run: >-
+          apt-get update -qq &&
+          apt-get install libpq-dev nodejs
 
       - uses: actions/checkout@v2
 
