@@ -17,7 +17,7 @@ jobs:
     # shared env varaibles
     env:
       BUNDLE_PATH: vendor/bundle
-
+      ImageOS: ubuntu18 # should not need this; trying to work around ruby setup bug
     services:
       # Note: this name/label has to be passed to the rails app as the db host
       postgres_service:
@@ -41,12 +41,11 @@ jobs:
 
       - uses: actions/checkout@v2
 
-
-      - name: Set up Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          # uses .ruby-version
-          bundler-cache: true
+      # - name: Set up Ruby
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     # uses .ruby-version
+      #     bundler-cache: true
 
       - name: Build & test App
         env:
