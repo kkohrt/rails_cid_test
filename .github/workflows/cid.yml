@@ -42,8 +42,6 @@ jobs:
           --health-retries 5
 
     steps:
-      env:
-        FILES_CHANGED_HERE: ${{ git diff --no-color --name-only $env:GITHUB_SHA main }}
 
       - name: Create git-diff file listing
         run: |
