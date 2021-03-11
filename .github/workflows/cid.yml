@@ -30,20 +30,18 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
-      - name: Set up Ruby 2.7.2
-        uses: actions/setup-ruby@v1
+      - name: install PostgreSQL client
+        run: sudo apt-get -y install libpq-dev
+
       - uses: actions/checkout@v2
         with:
           ruby-version: 2.7.2
           bundler-cache: true
 
-      - name: Install PostgreSQL client & bundler
-        run: |
-          apt-get -yqq install libpq-dev
-          gem install bundler
-          bundle install --jobs 4 --retry 3
+      - name: Set up Ruby using .ruby-version from repo
+        uses: actions/setup-ruby@v1
 
-      - name: Build App
+      - name: Build & test App
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
@@ -51,17 +49,10 @@ jobs:
           DATABASE_HOST: localhost
           RAILS_ENV: test
         run: |
-          bin/rails db:setup
-
-
-      - name: Build and test with Rake
-        env:
-          PGHOST: 127.0.0.1
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: cid_test
-          RAILS_ENV: test
-        run: |
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
           bundle exec rails db:create
           bundle exec rails db:migrate
           bundle exec rspec spec
+
