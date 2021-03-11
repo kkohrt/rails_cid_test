@@ -9,7 +9,7 @@ on: [push]
 
 jobs:
   rspec:
-   runs-on: ubuntu-latest
+    runs-on: ubuntu-18.04
     container:
       image: ruby:2.7.2
 
