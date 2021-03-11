@@ -31,7 +31,7 @@ jobs:
           --health-retries 5
     steps:
       - name: install PostgreSQL client
-        run: apt-get update -qq && apt-get install libpq-dev
+        run: apt-get update -qq && apt-get -y install libpq-dev
 
       - uses: actions/checkout@v2
         with:
