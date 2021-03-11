@@ -23,6 +23,7 @@ jobs:
       POSTGRES_DB: cid_test
       DATABASE_HOST: postgres_service # must match service name, below
       RAILS_ENV: test
+      FILES_CHANGED_HERE: ${{ git diff --no-color --name-only $GITHUB_SHA main }}
 
     services:
       # Note: this name/label has to be passed to the rails app as the db host
@@ -40,9 +41,6 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-        run: >-
-          mkdir -p /docker-entrypoint-initdb.d &&
-          printf "#!/bin/bash\nset -e\nexport ddd=2" >> /docker-entrypoint-initdb.d/init-user-db.sh
 
     steps:
       - name: get yarn keys
@@ -63,10 +61,9 @@ jobs:
           nodejs
           yarn
 
-      - name: set up PostgreSQL
+      - name: show diffs
         run: >-
-          apt-get install postgresql-client &&
-          psql -U postgres -c "CREATE ROLE vax LOGIN CREATEDB PASSWORD '923f8e8xm0q238xydfaos7bdyn';"
+          echp $FILES_CHANGED_HERE
 
       - uses: actions/checkout@v2
 
