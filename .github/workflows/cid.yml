@@ -38,8 +38,10 @@ jobs:
 
       - uses: actions/checkout@v2
 
-      - name: Set up Ruby using .ruby-version from repo
+      - name: Set up Ruby
         uses: actions/setup-ruby@v1
+          # (uses .ruby-version)
+          bundler-cache: true
 
       - name: Build & test App
         env:
@@ -52,7 +54,6 @@ jobs:
           gem install bundler
           bundle config path vendor/bundle
           bundle install --jobs 4 --retry 3
-          bundle exec rails db:create
-          bundle exec rails db:migrate
+          bundle exec rake db:setup
           bundle exec rspec spec
 
