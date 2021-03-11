@@ -14,6 +14,9 @@ jobs:
     container:
       # image: ubuntu:bionic
       image: ruby:2.7.2
+    # shared env varaibles
+    env:
+      BUNDLE_PATH: vendor/bundle
 
     services:
       # Note: this name/label has to be passed to the rails app as the db host
