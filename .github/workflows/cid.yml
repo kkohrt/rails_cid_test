@@ -9,6 +9,7 @@ on: [push]
 
 jobs:
   rspec:
+    name: Rspec - App
     runs-on: ubuntu-18.04
     container:
       image: ruby:2.7.2
@@ -28,39 +29,39 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-    stps:
-    - uses: actions/checkout@v2
-    - name: Set up Ruby 2.7.2
-      uses: actions/setup-ruby@v1
-      with:
-        ruby-version: 2.7.2
-        bundler-cache: true
+    steps:
+      - name: Set up Ruby 2.7.2
+        uses: actions/setup-ruby@v1
+      - uses: actions/checkout@v2
+        with:
+          ruby-version: 2.7.2
+          bundler-cache: true
 
-    - name: Install PostgreSQL client & bundler
-      run: |
-        sudo apt-get -yqq install libpq-dev
-        gem install bundler
-        bundle install --jobs 4 --retry 3
+      - name: Install PostgreSQL client & bundler
+        run: |
+          sudo apt-get -yqq install libpq-dev
+          gem install bundler
+          bundle install --jobs 4 --retry 3
 
-    - name: Build App
-      env:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: cid_test
-        DATABASE_HOST: localhost
-        RAILS_ENV: test
-      run: |
-        bin/rails db:setup
+      - name: Build App
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cid_test
+          DATABASE_HOST: localhost
+          RAILS_ENV: test
+        run: |
+          bin/rails db:setup
 
 
-    - name: Build and test with Rake
-      env:
-        PGHOST: 127.0.0.1
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: cid_test
-        RAILS_ENV: test
-      run: |
-        bundle exec rails db:create
-        bundle exec rails db:migrate
-        bundle exec rspec spec
+      - name: Build and test with Rake
+        env:
+          PGHOST: 127.0.0.1
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: cid_test
+          RAILS_ENV: test
+        run: |
+          bundle exec rails db:create
+          bundle exec rails db:migrate
+          bundle exec rspec spec
