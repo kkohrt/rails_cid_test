@@ -9,57 +9,74 @@ on: [push]
 
 jobs:
   rspec:
-   runs-on: ubuntu-latest
+    name: Rspec - App
+    runs-on: ubuntu-18.04
     container:
+      # image: ubuntu:bionic
       image: ruby:2.7.2
+    # shared env varaibles
+    env:
+      BUNDLE_PATH: vendor/bundle
+      ImageOS: ubuntu18 # should not need this; trying to work around ruby setup bug
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cid_test
+      DATABASE_HOST: postgres_service # must match service name, below
+      RAILS_ENV: test
 
     services:
-      postgres:
+      # Note: this name/label has to be passed to the rails app as the db host
+      postgres_service:
         image: postgres:13.2
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: cid_test
         ports:
-        - 5432:5432
+          - 5432:5432
         # needed because the postgres container does not provide a healthcheck
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+
     steps:
-    - uses: actions/checkout@v2
-    - name: Set up Ruby 2.7.2
-      uses: actions/setup-ruby@v1
-      with:
-        ruby-version: 2.7.2
-        bundler-cache: true
+      - name: get yarn keys
+        run: >-
+          curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
 
-    - name: Install PostgreSQL client & bundler
-      run: |
-        sudo apt-get -yqq install libpq-dev
-        gem install bundler
-        bundle install --jobs 4 --retry 3
+      - name: install yarn keys
+        run: >-
+          echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
 
-    - name: Build App
-      env:
-        POSTGRES_USER: postgres
-        POSTGRES_PASSWORD: postgres
-        POSTGRES_DB: cid_test
-        DATABASE_HOST: localhost
-        RAILS_ENV: test
-      run: |
-        bin/rails db:setup
+      - name: install PostgreSQL client & other app resources
+        run: >-
+          apt-get update -qq &&
+          apt-get install -y --no-install-recommends
+          libpq-dev
+          libxml2-dev
+          libxslt-dev
+          nodejs
+          yarn
 
+      - uses: actions/checkout@v2
 
-    - name: Build and test with Rake
-      env:
-        PGHOST: 127.0.0.1
-        PGUSER: postgres
-        DB
-        RAILS_ENV: test
-      run: |
-        bundle exec rails db:create
-        bundle exec rails db:migrate
-        bundle exec rspec spec
+      # - name: Set up Ruby
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     # uses .ruby-version
+      #     bundler-cache: true
+
+      - name: Install gems and set up app
+        run: |
+          gem install bundler
+          bundle config path vendor/bundle
+          bundle install --jobs 4 --retry 3
+          bundle exec rails db:setup
+          bundle exec rails webpacker:install
+          bundle exec rails webpacker:compile
+
+      - name: Test App
+        run: |
+          bundle exec rspec spec
