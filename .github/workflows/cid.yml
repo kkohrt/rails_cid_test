@@ -21,14 +21,15 @@ jobs:
           POSTGRES_PASSWORD: postgres
           POSTGRES_DB: cid_test
         ports:
-        - 5432:5432
+          - 5432:5432
         # needed because the postgres container does not provide a healthcheck
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-    steps:
+        options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
+        # options: >-
+        #   --health-cmd pg_isready
+        #   --health-interval 10s
+        #   --health-timeout 5s
+      #   --health-retries 5
+    stps:
     - uses: actions/checkout@v2
     - name: Set up Ruby 2.7.2
       uses: actions/setup-ruby@v1
@@ -56,8 +57,9 @@ jobs:
     - name: Build and test with Rake
       env:
         PGHOST: 127.0.0.1
-        PGUSER: postgres
-        DB
+        POSTGRES_USER: postgres
+        POSTGRES_PASSWORD: postgres
+        POSTGRES_DB: cid_test
         RAILS_ENV: test
       run: |
         bundle exec rails db:create
