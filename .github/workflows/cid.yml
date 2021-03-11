@@ -12,7 +12,7 @@ jobs:
     name: Rspec - App
     runs-on: ubuntu-18.04
     container:
-      image: ruby:2.7.2
+      image: ubuntu:bionic
 
     services:
       postgres:
