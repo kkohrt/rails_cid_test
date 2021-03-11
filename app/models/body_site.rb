@@ -19,6 +19,5 @@ class BodySite < ApplicationRecord
 
   def to_s
     "#{identifier}\t#{name}"
-
   end
 end
