@@ -3,7 +3,7 @@
 ## WIP: Custom Testing Action ##
 ################################
 
-name: CI : RSpec
+name: RSpec
 
 on: [push]
 
