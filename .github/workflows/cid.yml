@@ -65,7 +65,8 @@ jobs:
 
       - name: Create git-diff file listing
         run: |
-          echo "git_diff=$(git diff --no-color --name-only $env:GITHUB_SHA origin/main)" >> $GITHUB_ENV
+          sha=$(git rev-parse --short HEAD) &&
+          echo "git_diff=$(git diff --no-color --name-only $sha origin/main)" >> $GITHUB_ENV
 
       - name: show diffs
         run: >-
