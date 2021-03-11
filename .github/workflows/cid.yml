@@ -38,9 +38,10 @@ jobs:
 
       - uses: actions/checkout@v2
 
+      # uses .ruby-version
       - name: Set up Ruby
         uses: actions/setup-ruby@v1
-          # (uses .ruby-version)
+        with:
           bundler-cache: true
 
       - name: Build & test App
