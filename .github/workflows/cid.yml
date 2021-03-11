@@ -36,12 +36,18 @@ jobs:
           --health-retries 5
 
     steps:
-      - name: install PostgreSQL client
+      - name: get yarn keys
         run: >-
           curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
-          && echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-          && apt-get update -qq
-          && apt-get install -y --no-install-recommends
+
+      - name: install yarn keys
+        run: >-
+          echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+      - name: install PostgreSQL client & other app resources
+        run: >-
+          apt-get update -qq &&
+          apt-get install -y --no-install-recommends
           libpq-dev
           libxml2-dev
           libxslt-dev
