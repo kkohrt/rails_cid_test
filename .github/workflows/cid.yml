@@ -23,7 +23,6 @@ jobs:
       POSTGRES_DB: cid_test
       DATABASE_HOST: postgres_service # must match service name, below
       RAILS_ENV: test
-      FILES_CHANGED_HERE: ${{ git diff --no-color --name-only $GITHUB_SHA main }}
 
     services:
       # Note: this name/label has to be passed to the rails app as the db host
@@ -43,6 +42,13 @@ jobs:
           --health-retries 5
 
     steps:
+      env:
+        FILES_CHANGED_HERE: ${{ git diff --no-color --name-only $env:GITHUB_SHA main }}
+
+      - name: Create git-diff file listing
+        run: |
+          echo "git_diff=$(git diff --no-color --name-only $env:GITHUB_SHA main)" >> $GITHUB_ENV
+
       - name: get yarn keys
         run: >-
           curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
@@ -63,7 +69,7 @@ jobs:
 
       - name: show diffs
         run: >-
-          echp $FILES_CHANGED_HERE
+          echo "${{ env.git_diff }}"
 
       - uses: actions/checkout@v2
 
