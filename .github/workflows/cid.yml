@@ -12,7 +12,8 @@ jobs:
     name: Rspec - App
     runs-on: ubuntu-18.04
     container:
-      image: ubuntu:bionic
+      # image: ubuntu:bionic
+      image: ruby:2.7.2
 
     services:
       postgres:
@@ -31,12 +32,9 @@ jobs:
           --health-retries 5
     steps:
       - name: install PostgreSQL client
-        run: apt-get update -qq && apt-get -y install libpq-dev
+        run: apt-get update -qq && apt-get install libpq-dev
 
       - uses: actions/checkout@v2
-        with:
-          ruby-version: 2.7.2
-          bundler-cache: true
 
       - name: Set up Ruby using .ruby-version from repo
         uses: actions/setup-ruby@v1
