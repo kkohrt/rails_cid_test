@@ -18,6 +18,12 @@ jobs:
     env:
       BUNDLE_PATH: vendor/bundle
       ImageOS: ubuntu18 # should not need this; trying to work around ruby setup bug
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: cid_test
+      DATABASE_HOST: postgres_service # must match service name, below
+      RAILS_ENV: test
+
     services:
       # Note: this name/label has to be passed to the rails app as the db host
       postgres_service:
@@ -62,13 +68,7 @@ jobs:
       #     # uses .ruby-version
       #     bundler-cache: true
 
-      - name: Build & test App
-        env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: cid_test
-          DATABASE_HOST: postgres_service
-          RAILS_ENV: test
+      - name: Install gems and set up app
         run: |
           gem install bundler
           bundle config path vendor/bundle
@@ -76,5 +76,7 @@ jobs:
           bundle exec rails db:setup
           bundle exec rails webpacker:install
           bundle exec rails webpacker:compile
-          bundle exec rspec spec
 
+      - name: Test App
+        run: |
+          bundle exec rspec spec
