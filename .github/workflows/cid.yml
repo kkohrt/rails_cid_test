@@ -68,22 +68,21 @@ jobs:
       - id: changed_files
         uses: jitterbit/get-changed-files@v1
 
-      - name: changed_file_output
+      - name: Identify tests to run
         run: |
           for changed_file in ${{ steps.changed_files.outputs.all }}; do
-            echo "Do something with this ${changed_file}."
+              if [[ ${changed_file} =~ app\\models ]]; then
+                  echo "::set-env name=TRIGGER_TEST_MODELS::true"
+              else
+                  if [[ ${changed_file} =~ app\\controllers ]]; then
+                     echo "::set-env name=TRIGGER_TEST_CTRLS::true"
+                     test_controllers="true"
+                  else
+                     echo "::set-env name=TRIGGER_TEST_ALL::true"
+                  fi
+              fi
           done
 
-
-      - name: Create git-diff file listing
-        run: |
-          sha=$(git rev-parse --short HEAD) &&
-          git fetch &&
-          echo "git_diff=$(git diff --no-color --name-only $sha..main)" >> $GITHUB_ENV
-
-      - name: show diffs
-        run: >-
-          echo "${{ env.git_diff }}"
 
       # - name: Set up Ruby
       #   uses: ruby/setup-ruby@v1
@@ -100,6 +99,20 @@ jobs:
           bundle exec rails webpacker:install
           bundle exec rails webpacker:compile
 
-      - name: Test App
+      - name: Test Models
+        if env.TRIGGER_TEST_MODELS == 'true'
         run: |
+          echo "Testing Models"
+          bundle exec rspec spec/models/
+
+      - name: Test Controllers
+        if env.TRIGGER_TEST_CTRLS == 'true'
+        run: |
+          echo "Testing Controllers"
+          bundle exec rspec spec/views/
+
+      - name: Test All
+        if env.TRIGGER_TEST_ALL == 'true'
+        run: |
+          echo "Testing ALL"
           bundle exec rspec spec
