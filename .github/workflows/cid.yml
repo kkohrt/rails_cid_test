@@ -5,7 +5,7 @@
 
 name: RSpec
 
-on: [push]
+on: [push pull_request]
 
 jobs:
   rspec:
@@ -73,14 +73,17 @@ jobs:
           for changed_file in ${{ steps.changed_files.outputs.all }}; do
               case "$changed_file" in
                   app/models/*) echo "TRIGGER_TEST_MODEL=true" >> $GITHUB_ENV
+                  echo "$changed_file triggered model test"
                   ;;
                   app/controllers/*) echo "TRIGGER_TEST_CTRLS=true" >> $GITHUB_ENV
+                  echo "$changed_file triggered controller test"
                   ;;
                   public/*)
                   ;;
                   README*) echo "Skipping README"
                   ;;
                   *) echo "TRIGGER_TEST_ALL=true" >> $GITHUB_ENV
+                  echo "$changed_file triggered full test"
                   ;;
               esac
           done
