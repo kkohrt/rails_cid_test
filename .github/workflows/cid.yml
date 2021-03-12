@@ -77,7 +77,7 @@ jobs:
         run: |
           for changed_file in ${{ steps.changed_files.outputs.all }}; do
               case "$changed_file" in
-                  app/models/*) echo "TRIGGER_TEST_MODEL=true" >> $GITHUB_ENV
+                  app/models/*) echo "TRIGGER_TEST_MODELS=true" >> $GITHUB_ENV
                   echo "$changed_file triggered model test"
                   ;;
                   app/controllers/*) echo "TRIGGER_TEST_CTRLS=true" >> $GITHUB_ENV
@@ -92,21 +92,6 @@ jobs:
                   ;;
               esac
           done
-
-
-      #     echo "TRIGGER_TEST_MODEL=true" >> $GITHUB_ENV
-      #     TTM='set'
-      # elif [[ ${changed_file} =~ app\\controllers && -z ${TTC+x} ]]; then
-      #     echo "TRIGGER_TEST_CTRLS=true" >> $GITHUB_ENV
-      #     TTC='set'
-      # elif [[ -z ${TTA+x} ]]; then
-      #     echo "TRIGGER_TEST_ALL=true" >> $GITHUB_ENV
-
-      # - name: Set up Ruby
-      #   uses: ruby/setup-ruby@v1
-      #   with:
-      #     # uses .ruby-version
-      #     bundler-cache: true
 
       - name: Install gems and set up app
         run: |
