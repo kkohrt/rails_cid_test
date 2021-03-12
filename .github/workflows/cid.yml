@@ -65,9 +65,9 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: groupninemedia/filter-git-diff@master #093e7ab440d696600ccae18e8955e98306fcf41d
-        with:
-           args: regex ^config
+      # - uses: groupninemedia/filter-git-diff@master #093e7ab440d696600ccae18e8955e98306fcf41d
+      #   with:
+      #      args: regex ^config
 
       - name: Create git-diff file listing
         run: |
