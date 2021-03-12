@@ -9,8 +9,7 @@ class BodySitesController < ApplicationController
   end
 
   # GET /body_sites/1 or /body_sites/1.json
-  def show
-  end
+  def show; end
 
   # GET /body_sites/new
   def new
@@ -18,8 +17,7 @@ class BodySitesController < ApplicationController
   end
 
   # GET /body_sites/1/edit
-  def edit
-  end
+  def edit; end
 
   # POST /body_sites or /body_sites.json
   def create
