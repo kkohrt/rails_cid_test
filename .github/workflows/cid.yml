@@ -71,17 +71,20 @@ jobs:
       - name: Identify tests to run
         run: |
           for changed_file in ${{ steps.changed_files.outputs.all }}; do
-              if [ echo "$changed_file" | grep -q "app\models" ] && [ -z ${TTM+x} ]; then
-                  echo "TRIGGER_TEST_MODEL=true" >> $GITHUB_ENV
-                  TTM='set'
-              elif [ echo "$changed_file" | grep -q "app\controllers" ] && [ -z ${TTC+x} ]; then
-                  echo "TRIGGER_TEST_CTRLS=true" >> $GITHUB_ENV
-                  TTC='set'
-              elif [ -z ${TTA+x} ]; then
-                  echo "TRIGGER_TEST_ALL=true" >> $GITHUB_ENV
-                  TTA='set'
-              fi
+              case "$changed_file" in
+                  app/models/*) echo "TRIGGER_TEST_MODEL=true" >> $GITHUB_ENV
+                  ;;
+                  app/controllers/*) echo "TRIGGER_TEST_CTRLS=true" >> $GITHUB_ENV
+                  ;;
+                  public/*)
+                  ;;
+                  README*) echo "Skipping README"
+                  ;;
+                  *) echo "TRIGGER_TEST_ALL=true" >> $GITHUB_ENV
+                  ;;
+              esac
           done
+
 
       #     echo "TRIGGER_TEST_MODEL=true" >> $GITHUB_ENV
       #     TTM='set'
