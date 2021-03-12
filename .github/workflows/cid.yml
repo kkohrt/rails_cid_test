@@ -73,7 +73,7 @@ jobs:
         run: |
           sha=$(git rev-parse --short HEAD) &&
           git fetch &&
-          echo "git_diff=$(git diff --no-color --name-only $sha main)" >> $GITHUB_ENV
+          echo "git_diff=$(git diff --no-color --name-only $sha..main)" >> $GITHUB_ENV
 
       - name: show diffs
         run: >-
