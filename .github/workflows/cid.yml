@@ -100,19 +100,19 @@ jobs:
           bundle exec rails webpacker:compile
 
       - name: Test Models
-        if env.TRIGGER_TEST_MODELS == 'true'
+        if: env.TRIGGER_TEST_MODELS == 'true'
         run: |
           echo "Testing Models"
           bundle exec rspec spec/models/
 
       - name: Test Controllers
-        if env.TRIGGER_TEST_CTRLS == 'true'
+        if: env.TRIGGER_TEST_CTRLS == 'true'
         run: |
           echo "Testing Controllers"
           bundle exec rspec spec/views/
 
       - name: Test All
-        if env.TRIGGER_TEST_ALL == 'true'
+        if: env.TRIGGER_TEST_ALL == 'true'
         run: |
           echo "Testing ALL"
           bundle exec rspec spec
