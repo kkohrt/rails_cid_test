@@ -77,7 +77,7 @@ jobs:
               elif [[ ${changed_file} =~ app\\controllers && -z ${TTC+x} ]]; then
                   echo "TRIGGER_TEST_CTRLS=true" >> $GITHUB_ENV
                   TTC='set'
-              elif [[-z ${TTA+x}]]
+              elif [[ -z ${TTA+x} ]]; then
                   echo "TRIGGER_TEST_ALL=true" >> $GITHUB_ENV
                   TTA='set'
               fi
