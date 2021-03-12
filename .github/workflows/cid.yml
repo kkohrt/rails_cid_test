@@ -63,6 +63,11 @@ jobs:
 
       - uses: actions/checkout@v2
 
+      - name: git-diff
+        uses: groupninemedia/filter-git-diff@master #093e7ab440d696600ccae18e8955e98306fcf41d
+        where:
+           args: regex ^config
+
       - name: Create git-diff file listing
         run: |
           sha=$(git rev-parse --short HEAD) &&
