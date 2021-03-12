@@ -65,9 +65,15 @@ jobs:
         with:
           fetch-depth: 0
 
-      # - uses: groupninemedia/filter-git-diff@master #093e7ab440d696600ccae18e8955e98306fcf41d
-      #   with:
-      #      args: regex ^config
+      - id: changed_files
+        uses: jitterbit/get-changed-files@v1
+
+      - name: changed_file_output
+        run: |
+          for changed_file in ${{ steps.changed_files.outputs.all }}; do
+            echo "Do something with this ${changed_file}."
+          done
+
 
       - name: Create git-diff file listing
         run: |
