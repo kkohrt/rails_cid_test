@@ -71,18 +71,25 @@ jobs:
       - name: Identify tests to run
         run: |
           for changed_file in ${{ steps.changed_files.outputs.all }}; do
-              if [[ ${changed_file} =~ app\\models && -z ${TTM+x} ]]; then
+              if [ echo "$changed_file" | grep -q "app\models" ] && [ -z ${TTM+x} ]; then
                   echo "TRIGGER_TEST_MODEL=true" >> $GITHUB_ENV
                   TTM='set'
-              elif [[ ${changed_file} =~ app\\controllers && -z ${TTC+x} ]]; then
+              elif [ echo "$changed_file" | grep -q "app\controllers" ] && [ -z ${TTC+x} ]; then
                   echo "TRIGGER_TEST_CTRLS=true" >> $GITHUB_ENV
                   TTC='set'
-              elif [[ -z ${TTA+x} ]]; then
+              elif [ -z ${TTA+x} ]; then
                   echo "TRIGGER_TEST_ALL=true" >> $GITHUB_ENV
                   TTA='set'
               fi
           done
 
+      #     echo "TRIGGER_TEST_MODEL=true" >> $GITHUB_ENV
+      #     TTM='set'
+      # elif [[ ${changed_file} =~ app\\controllers && -z ${TTC+x} ]]; then
+      #     echo "TRIGGER_TEST_CTRLS=true" >> $GITHUB_ENV
+      #     TTC='set'
+      # elif [[ -z ${TTA+x} ]]; then
+      #     echo "TRIGGER_TEST_ALL=true" >> $GITHUB_ENV
 
       # - name: Set up Ruby
       #   uses: ruby/setup-ruby@v1
