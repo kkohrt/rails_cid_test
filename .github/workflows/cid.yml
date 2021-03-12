@@ -5,7 +5,12 @@
 
 name: RSpec
 
-on: [push]
+on:
+  push:
+    # branches-ignore: [main]
+    # Remove the line above to run when pushing to master
+  pull_request:
+    branches: [main]
 
 jobs:
   rspec:
@@ -42,6 +47,7 @@ jobs:
           --health-retries 5
 
     steps:
+
       - name: get yarn keys
         run: >-
           curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add -
@@ -61,12 +67,31 @@ jobs:
           yarn
 
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
 
-      # - name: Set up Ruby
-      #   uses: ruby/setup-ruby@v1
-      #   with:
-      #     # uses .ruby-version
-      #     bundler-cache: true
+      - id: changed_files
+        uses: jitterbit/get-changed-files@v1
+
+      - name: Identify tests to run
+        run: |
+          for changed_file in ${{ steps.changed_files.outputs.all }}; do
+              case "$changed_file" in
+                  app/models/*) echo "TRIGGER_TEST_MODELS=true" >> $GITHUB_ENV
+                  echo "$changed_file triggered model test"
+                  ;;
+                  app/controllers/*) echo "TRIGGER_TEST_CTRLS=true" >> $GITHUB_ENV
+                  echo "$changed_file triggered controller test"
+                  ;;
+                  public/*)
+                  ;;
+                  README*) echo "Skipping README"
+                  ;;
+                  *) echo "TRIGGER_TEST_ALL=true" >> $GITHUB_ENV
+                  echo "$changed_file triggered full test"
+                  ;;
+              esac
+          done
 
       - name: Install gems and set up app
         run: |
@@ -77,6 +102,20 @@ jobs:
           bundle exec rails webpacker:install
           bundle exec rails webpacker:compile
 
-      - name: Test App
+      - name: Test Models
+        if: env.TRIGGER_TEST_MODELS == 'true'
         run: |
+          echo "Testing Models"
+          bundle exec rspec spec/models/
+
+      - name: Test Controllers
+        if: env.TRIGGER_TEST_CTRLS == 'true'
+        run: |
+          echo "Testing Controllers"
+          bundle exec rspec spec/views/
+
+      - name: Test All
+        if: env.TRIGGER_TEST_ALL == 'true'
+        run: |
+          echo "Testing ALL"
           bundle exec rspec spec
