@@ -71,15 +71,15 @@ jobs:
       - name: Identify tests to run
         run: |
           for changed_file in ${{ steps.changed_files.outputs.all }}; do
-              if [[ ${changed_file} =~ app\\models ]]; then
-                  echo "::set-env name=TRIGGER_TEST_MODELS::true"
-              else
-                  if [[ ${changed_file} =~ app\\controllers ]]; then
-                     echo "::set-env name=TRIGGER_TEST_CTRLS::true"
-                     test_controllers="true"
-                  else
-                     echo "::set-env name=TRIGGER_TEST_ALL::true"
-                  fi
+              if [[ ${changed_file} =~ app\\models && -z ${TTM+x} ]]; then
+                  echo "TRIGGER_TEST_MODEL=true" >> $GITHUB_ENV
+                  TTM='set'
+              elif [[ ${changed_file} =~ app\\controllers && -z ${TTC+x} ]]; then
+                  echo "TRIGGER_TEST_CTRLS=true" >> $GITHUB_ENV
+                  TTC='set'
+              elif [[-z ${TTA+x}]]
+                  echo "TRIGGER_TEST_ALL=true" >> $GITHUB_ENV
+                  TTA='set'
               fi
           done
 
